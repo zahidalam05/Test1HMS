@@ -1,0 +1,38 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import Layout from './components/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import Profile from './pages/Profile';
+import Hostel from './pages/Hostel';
+import FeePayment from './pages/FeePayment';
+import Complaints from './pages/Complaints';
+import Notices from './pages/Notices';
+
+function App() {
+  return (
+    <Router>
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
+          <Route element={<ProtectedRoute />}>
+            <Route element={<Layout />}>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/hostel" element={<Hostel />} />
+              <Route path="/fees" element={<FeePayment />} />
+              <Route path="/complaints" element={<Complaints />} />
+              <Route path="/notices" element={<Notices />} />
+            </Route>
+          </Route>
+        </Routes>
+      </AuthProvider>
+    </Router>
+  );
+}
+
+export default App;
