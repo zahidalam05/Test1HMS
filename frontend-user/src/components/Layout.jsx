@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react';
 import { Link, useNavigate, Outlet, useLocation } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
+import Footer from './Footer';
 import {
     LayoutDashboard,
     User,
@@ -112,9 +113,12 @@ const Layout = () => {
                     </div>
                 </header>
 
-                <main className="flex-1 overflow-y-auto p-6 bg-gray-50 scroll-smooth">
-                    <Outlet />
-                </main>
+                <div className="flex-1 overflow-y-auto bg-gray-50 scroll-smooth flex flex-col">
+                    <main className="flex-1 p-6">
+                        <Outlet />
+                    </main>
+                    <Footer />
+                </div>
             </div>
 
             {sidebarOpen && <div className="fixed inset-0 bg-black/20 z-40 md:hidden" onClick={() => setSidebarOpen(false)}></div>}

@@ -2,6 +2,7 @@ import HostelApplication from '../models/HostelApplication.js';
 import Student from '../models/Student.js';
 import Room from '../models/Room.js';
 import Payment from '../models/Payment.js';
+import Hostel from '../models/Hostel.js';
 
 // @desc    Apply for hostel (Multi-step + Payment)
 // @route   POST /api/students/apply
@@ -92,7 +93,7 @@ const getAllApplications = async (req, res) => {
 // @route   PUT /api/students/applications/:id
 // @access  Private (Admin)
 const updateApplicationStatus = async (req, res) => {
-    const { status, adminRemark, allocatedRoomId } = req.body;
+    const { status, adminRemark, allocatedRoomId, hostelName, roomNumber } = req.body;
 
     const application = await HostelApplication.findById(req.params.id);
     if (!application) {
@@ -103,21 +104,59 @@ const updateApplicationStatus = async (req, res) => {
     application.status = status;
     application.adminRemark = adminRemark;
 
-    if (status === 'Approved' && allocatedRoomId) {
-        const room = await Room.findById(allocatedRoomId);
-        const student = await Student.findById(application.student);
+    if (status === 'Approved') {
+        let room;
 
-        if (room && student) {
-            if (room.occupants.length < room.capacity) {
-                room.occupants.push(student._id);
-                await room.save();
+        if (allocatedRoomId) {
+            room = await Room.findById(allocatedRoomId);
+        } else if (hostelName && roomNumber) {
+            // Automatic Create/Find Logic
+            let hostel = await Hostel.findOne({ name: hostelName });
+            if (!hostel) {
+                // Infer gender from hostel name if possible, default to Co-ed
+                let gender = 'Co-ed';
+                if (hostelName.toUpperCase().includes('GH')) gender = 'Female';
+                else if (hostelName.toUpperCase().includes('BH') || hostelName.toUpperCase().match(/^H\d+$/)) gender = 'Male';
 
-                student.room = room._id;
-                student.hostel = room.hostel;
-                await student.save();
-            } else {
-                res.status(400);
-                throw new Error('Room is full');
+                hostel = await Hostel.create({
+                    name: hostelName,
+                    gender,
+                    allowedYears: ['All']
+                });
+            }
+
+            room = await Room.findOne({ hostel: hostel._id, roomNumber });
+            if (!room) {
+                room = await Room.create({
+                    hostel: hostel._id,
+                    roomNumber,
+                    roomType: 'Standard',
+                    capacity: 3 // Default capacity
+                });
+            }
+        }
+
+        if (room) {
+            const student = await Student.findById(application.student);
+            if (student) {
+                // Check capacity
+                if (room.occupants.length < room.capacity) {
+                    // Avoid duplicate
+                    if (!room.occupants.includes(student._id)) {
+                        room.occupants.push(student._id);
+                        await room.save();
+                    }
+
+                    student.room = room._id;
+                    student.hostel = room.hostel;
+                    await student.save();
+
+                    // Also update application with allocated details for reference
+                    application.allocatedRoomId = room._id;
+                } else {
+                    res.status(400);
+                    throw new Error(`Room ${room.roomNumber} is full (Capacity: ${room.capacity})`);
+                }
             }
         }
     }
@@ -126,4 +165,17 @@ const updateApplicationStatus = async (req, res) => {
     res.json(updatedApplication);
 };
 
-export { applyHostel, getAllStudents, getAllApplications, updateApplicationStatus };
+// @desc    Get my applications
+// @route   GET /api/students/my-applications
+// @access  Private (Student)
+const getMyApplications = async (req, res) => {
+    const student = await Student.findOne({ user: req.user._id });
+    if (!student) {
+        res.status(404);
+        throw new Error('Student not found');
+    }
+    const applications = await HostelApplication.find({ student: student._id }).sort({ createdAt: -1 });
+    res.json(applications);
+};
+
+export { applyHostel, getAllStudents, getAllApplications, updateApplicationStatus, getMyApplications };
