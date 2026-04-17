@@ -4,14 +4,14 @@ import API from '../services/api';
 const Complaints = () => {
     const [complaints, setComplaints] = useState([]);
 
-    useEffect(() => {
-        fetchComplaints();
-    }, []);
-
     const fetchComplaints = async () => {
         const { data } = await API.get('/complaints');
         setComplaints(data);
     };
+
+    useEffect(() => {
+        fetchComplaints();
+    }, []);
 
     const handleResolve = async (id) => {
         const remark = prompt("Enter resolution remark:");
@@ -21,6 +21,7 @@ const Complaints = () => {
             await API.put(`/complaints/${id}`, { status: 'Resolved', adminRemark: remark });
             fetchComplaints();
         } catch (e) {
+            console.error(e);
             alert('Failed to resolve');
         }
     };
@@ -35,8 +36,8 @@ const Complaints = () => {
                         <div className="flex-1">
                             <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-2">
                                 <span className={`px-2 py-1 text-xs font-semibold text-white rounded-md ${c.category === 'Electricity' ? 'bg-yellow-500' :
-                                        c.category === 'Plumbing' ? 'bg-blue-500' :
-                                            c.category === 'Cleaning' ? 'bg-green-500' : 'bg-gray-500'
+                                    c.category === 'Plumbing' ? 'bg-blue-500' :
+                                        c.category === 'Cleaning' ? 'bg-green-500' : 'bg-gray-500'
                                     }`}>
                                     {c.category}
                                 </span>

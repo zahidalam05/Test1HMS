@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import { Link, useNavigate, Outlet, useLocation } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import Footer from './Footer';
+import Chatbot from './Chatbot';
 import {
     LayoutDashboard,
     User,
@@ -12,7 +13,8 @@ import {
     LogOut,
     Menu,
     X,
-    ChevronDown
+    ChevronDown,
+    Utensils
 } from 'lucide-react';
 
 const Layout = () => {
@@ -31,12 +33,13 @@ const Layout = () => {
         { path: '/', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
         { path: '/hostel', label: 'Apply Room', icon: <Home size={20} /> },
         { path: '/fees', label: 'See Payments', icon: <CreditCard size={20} /> },
+        { path: '/mess', label: 'Mess', icon: <Utensils size={20} /> },
         { path: '/complaints', label: 'Complaints', icon: <MessageSquare size={20} /> },
         { path: '/notices', label: 'Notices', icon: <Bell size={20} /> },
     ];
 
     return (
-        <div className="flex h-screen bg-gray-50 font-sans">
+        <div className="flex h-screen bg-[#f0f2f5] font-sans">
             {/* Sidebar */}
             <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl transform transition-transform duration-300 ease-in-out md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="flex items-center justify-between p-6 border-b">
@@ -113,7 +116,7 @@ const Layout = () => {
                     </div>
                 </header>
 
-                <div className="flex-1 overflow-y-auto bg-gray-50 scroll-smooth flex flex-col">
+                <div className="flex-1 overflow-y-auto bg-[#f0f2f5] scroll-smooth flex flex-col">
                     <main className="flex-1 p-6">
                         <Outlet />
                     </main>
@@ -122,6 +125,8 @@ const Layout = () => {
             </div>
 
             {sidebarOpen && <div className="fixed inset-0 bg-black/20 z-40 md:hidden" onClick={() => setSidebarOpen(false)}></div>}
+
+            <Chatbot />
         </div>
     );
 };

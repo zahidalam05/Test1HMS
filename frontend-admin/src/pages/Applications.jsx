@@ -11,16 +11,16 @@ const Applications = () => {
     const [allocating, setAllocating] = useState(false);
     const [allocData, setAllocData] = useState({ type: '', name: '', room: '' });
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
     const fetchData = async () => {
         try {
             const { data } = await API.get('/students/applications');
             setApplications(data);
         } catch (e) { console.error(e); }
     };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     const handleOpenAllocate = () => {
         setAllocating(true);
@@ -65,7 +65,7 @@ const Applications = () => {
             await API.put(`/students/applications/${viewApp._id}`, { status: 'Rejected' });
             setViewApp(null);
             fetchData();
-        } catch (e) { alert("Failed"); }
+        } catch (e) { console.error(e); alert("Failed"); }
     };
 
     const filteredApps = applications.filter(app =>
@@ -190,28 +190,60 @@ const Applications = () => {
                                 </Section>
                             </div>
 
-                            {/* Payment Section */}
-                            <div className="p-4 bg-gray-50 rounded-xl border border-gray-200 flex flex-col md:flex-row gap-6">
-                                <div className="flex-1 space-y-3 text-sm">
-                                    <h4 className="font-bold text-gray-800 border-b pb-2 mb-2">Payment Info</h4>
-                                    <Field label="Txn ID" value={viewApp.payment?.txnId} />
-                                    <Field label="Amount" value={`₹${viewApp.payment?.amount}`} />
-                                    <Field label="Date" value={new Date(viewApp.payment?.txnDate).toLocaleDateString()} />
-                                    <Field label="Bank" value={viewApp.payment?.bank} />
+                            {/* Payment Section (Split Receipts) */}
+                            <div className="p-6 bg-gray-50 rounded-[28px] border border-gray-200">
+                                <h4 className="font-black text-gray-900 mb-6 uppercase tracking-widest text-sm flex items-center gap-2">
+                                    <div className="w-1 h-4 bg-indigo-500 rounded-full"></div>
+                                    Payment Verification
+                                </h4>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    {/* Hostel Fee */}
+                                    <div className="space-y-4">
+                                        <div className="bg-white p-4 rounded-2xl border border-gray-100">
+                                            <Field label="Hostel Fee" value={viewApp.payment?.hostelFeeAmount ? `₹${viewApp.payment.hostelFeeAmount}` : 'N/A'} />
+                                            <Field label="Bank" value={viewApp.payment?.bank} />
+                                        </div>
+                                        <h5 className="text-[11px] font-bold text-gray-400 uppercase tracking-tighter">Hostel Receipt</h5>
+                                        <a
+                                            href={`http://localhost:5000/${viewApp.payment?.hostelFeeUrl || viewApp.payment?.screenshotUrl}`}
+                                            target="_blank"
+                                            className="block w-full h-40 bg-gray-200 rounded-2xl overflow-hidden relative group border-2 border-white shadow-md"
+                                        >
+                                            <img
+                                                src={`http://localhost:5000/${viewApp.payment?.hostelFeeUrl || viewApp.payment?.screenshotUrl}`}
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                                alt="Hostel Proof"
+                                            />
+                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold">View Full</div>
+                                        </a>
+                                    </div>
+
+                                    {/* Mess Fee */}
+                                    <div className="space-y-4">
+                                        <div className="bg-white p-4 rounded-2xl border border-gray-100">
+                                            <Field label="Mess Fee" value={viewApp.payment?.messFeeAmount ? `₹${viewApp.payment.messFeeAmount}` : 'N/A'} />
+                                            <Field label="Total Paid" value={<span className="text-indigo-600 font-black">₹${viewApp.payment?.totalAmount || viewApp.payment?.amount}</span>} />
+                                        </div>
+                                        <h5 className="text-[11px] font-bold text-gray-400 uppercase tracking-tighter">Mess Receipt</h5>
+                                        <a
+                                            href={`http://localhost:5000/${viewApp.payment?.messFeeUrl || viewApp.payment?.screenshotUrl}`}
+                                            target="_blank"
+                                            className="block w-full h-40 bg-gray-200 rounded-2xl overflow-hidden relative group border-2 border-white shadow-md"
+                                        >
+                                            <img
+                                                src={`http://localhost:5000/${viewApp.payment?.messFeeUrl || viewApp.payment?.screenshotUrl}`}
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                                alt="Mess Proof"
+                                            />
+                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold">View Full</div>
+                                        </a>
+                                    </div>
                                 </div>
-                                <div className="flex-1">
-                                    <h4 className="font-bold text-gray-800 border-b pb-2 mb-2">Screenshot Proof</h4>
-                                    <a
-                                        href={`http://localhost:5000/${viewApp.payment?.screenshotUrl}`}
-                                        target="_blank"
-                                        className="block w-full h-32 bg-gray-200 rounded-lg overflow-hidden relative group"
-                                    >
-                                        <img
-                                            src={`http://localhost:5000/${viewApp.payment?.screenshotUrl}`}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                                            alt="Proof"
-                                        />
-                                    </a>
+
+                                <div className="mt-6 pt-4 border-t border-gray-200 flex justify-between text-xs font-bold text-gray-500">
+                                    <span>TXN ID: {viewApp.payment?.txnId}</span>
+                                    <span>DATE: {new Date(viewApp.payment?.txnDate).toLocaleDateString()}</span>
                                 </div>
                             </div>
 
@@ -296,14 +328,17 @@ const Applications = () => {
 };
 
 // Helper Components
-const Section = ({ title, icon: Icon, children }) => (
-    <div>
-        <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2 mb-4 border-b pb-2">
-            <Icon size={16} className="text-indigo-500" /> {title}
-        </h3>
-        {children}
-    </div>
-);
+const Section = (props) => {
+    const IconComponent = props.icon;
+    return (
+        <div>
+            <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2 mb-4 border-b pb-2">
+                <IconComponent size={16} className="text-indigo-500" /> {props.title}
+            </h3>
+            {props.children}
+        </div>
+    );
+};
 
 const Field = ({ label, value }) => (
     <div className="flex justify-between border-b border-gray-100 py-1 last:border-0">

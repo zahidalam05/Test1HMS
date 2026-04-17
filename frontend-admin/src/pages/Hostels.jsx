@@ -6,14 +6,14 @@ const Hostels = () => {
     const [showForm, setShowForm] = useState(false);
     const [newHostel, setNewHostel] = useState({ name: '', gender: 'Male', allowedYears: [''] });
 
-    useEffect(() => {
-        fetchHostels();
-    }, []);
-
     const fetchHostels = async () => {
         const { data } = await API.get('/hostels');
         setHostels(data);
     };
+
+    useEffect(() => {
+        fetchHostels();
+    }, []);
 
     const handleCreateHostel = async (e) => {
         e.preventDefault();
@@ -22,6 +22,7 @@ const Hostels = () => {
             fetchHostels();
             setShowForm(false);
         } catch (e) {
+            console.error(e);
             alert('Failed to create hostel');
         }
     };

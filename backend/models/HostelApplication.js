@@ -30,13 +30,16 @@ const hostelApplicationSchema = mongoose.Schema(
             pinCode: { type: String, required: true },
         },
 
-        // Step 3 Payment Details linking
+        // Step 3 Payment Details linking (Split Mess & Hostel Fee)
         payment: {
-            amount: { type: Number, required: true },
+            hostelFeeAmount: { type: Number, required: true },
+            messFeeAmount: { type: Number, required: true },
+            totalAmount: { type: Number, required: true },
             txnId: { type: String, required: true },
             txnDate: { type: Date, required: true },
             bank: { type: String, required: true },
-            screenshotUrl: { type: String, required: true }
+            hostelFeeUrl: { type: String, required: true },
+            messFeeUrl: { type: String, required: true }
         },
 
         status: {

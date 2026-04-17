@@ -34,6 +34,15 @@ const studentSchema = mongoose.Schema(
             ref: 'Room',
             default: null,
         },
+        foodPreference: {
+            type: String,
+            enum: ['Veg', 'Non-Veg'],
+            default: 'Veg'
+        },
+        isMessSec: {
+            type: Boolean,
+            default: false
+        },
     },
     {
         timestamps: true,

@@ -3,6 +3,7 @@ import HostelApplication from '../models/HostelApplication.js';
 import Complaint from '../models/Complaint.js';
 import Room from '../models/Room.js';
 import Hostel from '../models/Hostel.js';
+import MessLeave from '../models/MessLeave.js';
 
 // @desc    Get Admin Dashboard Stats
 // @route   GET /api/admin/dashboard
@@ -24,6 +25,19 @@ const getDashboardStats = async (req, res) => {
         });
         const occupancyRate = totalCapacity > 0 ? ((totalOccupants / totalCapacity) * 100).toFixed(1) : 0;
 
+        // Mess Leave logic
+        const today = new Date();
+        const startOfToday = new Date(today.setHours(0, 0, 0, 0));
+        const endOfToday = new Date(today.setHours(23, 59, 59, 999));
+
+        const leavesToday = await MessLeave.find({
+            status: 'Approved',
+            startDate: { $lte: endOfToday },
+            endDate: { $gte: startOfToday }
+        }).populate({ path: 'student', populate: { path: 'user' } });
+
+        const onLeaveCount = leavesToday.length;
+
         // 3. Recent Data
         const recentApplications = await HostelApplication.find({})
             .sort({ createdAt: -1 })
@@ -41,10 +55,13 @@ const getDashboardStats = async (req, res) => {
                 students: totalStudents,
                 pendingApps,
                 resolvedComplaints,
-                occupancyRate
+                occupancyRate,
+                eatingToday: totalOccupants - onLeaveCount,
+                onLeave: onLeaveCount
             },
             recentApplications,
-            recentComplaints
+            recentComplaints,
+            leavesToday
         });
     } catch (error) {
         res.status(500).json({ message: error.message });

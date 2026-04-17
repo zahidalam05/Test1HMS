@@ -14,7 +14,8 @@ import {
     Menu,
     X,
     ChevronDown,
-    Search
+    Search,
+    Utensils
 } from 'lucide-react';
 
 const AdminLayout = () => {
@@ -35,12 +36,13 @@ const AdminLayout = () => {
         { path: '/students', label: 'Students', icon: <Users size={20} /> },
         { path: '/hostels', label: 'Hostels & Rooms', icon: <Hotel size={20} /> },
         { path: '/payments', label: 'Payments', icon: <CreditCard size={20} /> },
+        { path: '/mess', label: 'Mess System', icon: <Utensils size={20} /> },
         { path: '/complaints', label: 'Complaints', icon: <MessageSquare size={20} /> },
         { path: '/notices', label: 'Notices', icon: <Bell size={20} /> },
     ];
 
     return (
-        <div className="flex h-screen bg-gray-50 font-sans text-gray-800">
+        <div className="flex h-screen bg-[#f0f2f5] font-sans text-gray-800">
             {/* Sidebar */}
             <aside className={`fixed inset-y-0 left-0 z-50 w-72 bg-gray-900 text-white transform transition-transform duration-300 ease-in-out md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="flex items-center justify-between p-6 h-20 border-b border-gray-800">
@@ -125,7 +127,7 @@ const AdminLayout = () => {
                     </div>
                 </header>
 
-                <div className="flex-1 overflow-y-auto bg-gray-50 scroll-smooth flex flex-col">
+                <div className="flex-1 overflow-y-auto bg-[#f0f2f5] scroll-smooth flex flex-col">
                     <main className="flex-1 p-6 md:p-8">
                         <Outlet />
                     </main>

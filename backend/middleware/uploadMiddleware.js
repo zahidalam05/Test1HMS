@@ -18,9 +18,12 @@ function checkFileType(file, cb) {
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = filetypes.test(file.mimetype);
 
+    console.log(`Checking file: ${file.originalname} (${file.mimetype})`);
+
     if (extname && mimetype) {
         return cb(null, true);
     } else {
+        console.warn(`File rejected: ${file.originalname}`);
         cb('Images or PDFs only!');
     }
 }

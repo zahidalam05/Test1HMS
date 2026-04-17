@@ -11,7 +11,8 @@ import studentRoutes from './routes/studentRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import complaintRoutes from './routes/complaintRoutes.js';
 import noticeRoutes from './routes/noticeRoutes.js';
-
+import messRoutes from './routes/messRoutes.js';
+import chatbotRoutes from './routes/chatbotRoutes.js';
 // Load env vars
 dotenv.config();
 
@@ -52,10 +53,18 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/notices', noticeRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/mess', messRoutes);
+app.use('/api/chatbot', chatbotRoutes);
 
 // Error Handling Middleware
+import fs from 'fs';
 app.use((err, req, res, next) => {
     const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+
+    // Log to file for AI debugging
+    const logMsg = `\n[${new Date().toISOString()}] ERROR: ${err.message}\nSTACK: ${err.stack}\n`;
+    fs.appendFileSync('debug.log', logMsg);
+
     res.status(statusCode);
     res.json({
         message: err.message,

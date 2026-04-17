@@ -4,14 +4,14 @@ import API from '../services/api';
 const Students = () => {
     const [students, setStudents] = useState([]);
 
-    useEffect(() => {
-        fetchStudents();
-    }, []);
-
     const fetchStudents = async () => {
         const { data } = await API.get('/students');
         setStudents(data);
     };
+
+    useEffect(() => {
+        fetchStudents();
+    }, []);
 
     return (
         <div className="space-y-6">

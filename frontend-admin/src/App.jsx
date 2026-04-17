@@ -10,6 +10,7 @@ import Payments from './pages/Payments';
 import Applications from './pages/Applications';
 import Complaints from './pages/Complaints';
 import Notices from './pages/Notices';
+import Mess from './pages/Mess';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
               <Route path="/applications" element={<Applications />} />
               <Route path="/complaints" element={<Complaints />} />
               <Route path="/notices" element={<Notices />} />
+              <Route path="/mess" element={<Mess />} />
             </Route>
           </Route>
         </Routes>

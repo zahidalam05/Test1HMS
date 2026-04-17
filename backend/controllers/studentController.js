@@ -9,6 +9,7 @@ import Hostel from '../models/Hostel.js';
 // @access  Private (Student)
 const applyHostel = async (req, res) => {
     try {
+        console.log("Checking Student Profile for User ID:", req.user?._id);
         const student = await Student.findOne({ user: req.user._id });
         if (!student) {
             res.status(404);
@@ -32,37 +33,66 @@ const applyHostel = async (req, res) => {
         const {
             name, rollNo, branch, fatherName, mobNo, email, academicYear, session, parentMobNo,
             hostelType, hostelTypeOther, roomNo, cgpa,
-            state, district, block, pinCode, // Address unpacked
-            amount, txnId, txnDate, bank // Payment unpacked
+            state, district, block, pinCode,
+            hostelFeeAmount, messFeeAmount, txnId, txnDate, bank
         } = req.body;
 
-        const screenshotUrl = req.file ? req.file.path : 'placeholder.jpg'; // In production, require file
+        // When using upload.any(), req.files is an array of objects
+        const findFile = (fieldname) => {
+            if (!Array.isArray(req.files)) return 'placeholder.jpg';
+            const file = req.files.find(f => f.fieldname === fieldname);
+            return file ? file.path.replace(/\\/g, '/') : 'placeholder.jpg';
+        };
+
+        const hostelFeeUrl = findFile('hostelFeeScreenshot');
+        const messFeeUrl = findFile('messFeeScreenshot');
+
+        const hFee = parseFloat(hostelFeeAmount || 0);
+        const mFee = parseFloat(messFeeAmount || 0);
+        const totalAmount = hFee + mFee;
 
         // 1. Create Application
         const application = await HostelApplication.create({
             student: student._id,
             name, rollNo, branch, fatherName, mobNo, email, academicYear, session, parentMobNo,
-            hostelType, hostelTypeOther, roomNo, cgpa,
+            hostelType, hostelTypeOther, roomNo,
+            cgpa: cgpa ? parseFloat(cgpa) : undefined,
             address: { state, district, block, pinCode },
-            payment: { amount, txnId, txnDate, bank, screenshotUrl }
+            payment: {
+                hostelFeeAmount: hFee,
+                messFeeAmount: mFee,
+                totalAmount,
+                txnId,
+                txnDate: txnDate || new Date(),
+                bank,
+                hostelFeeUrl,
+                messFeeUrl
+            }
         });
 
-        // 2. Create Payment Record (For History)
+        // 2. Create Payment Record (Combined for History)
         await Payment.create({
             student: student._id,
-            amount,
+            amount: totalAmount,
             txnId,
-            paymentDate: txnDate,
-            paymentMode: 'Bank Transfer', // inferred
-            screenshotUrl,
-            remark: 'Application Fee',
+            paymentDate: txnDate || new Date(),
+            paymentMode: 'Bank Transfer',
+            screenshotUrl: hostelFeeUrl,
+            remark: 'Hostel + Mess Application Fee',
             status: 'Pending'
         });
 
         res.status(201).json(application);
     } catch (error) {
-        console.error(error);
-        res.status(400).json({ message: error.message });
+        console.error("Apply Controller Error Detail:", error);
+
+        // Handle Mongoose Validation Errors Specifically
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(val => val.message);
+            return res.status(400).json({ message: "Validation Failed: " + messages.join(', ') });
+        }
+
+        res.status(400).json({ message: "Submission Failed: " + error.message });
     }
 };
 

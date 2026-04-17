@@ -11,8 +11,8 @@ import { protect, admin } from '../middleware/authMiddleware.js';
 import upload from '../middleware/uploadMiddleware.js';
 
 router.route('/').get(protect, admin, getAllStudents);
-// Update Apply route to handle file upload
-router.route('/apply').post(protect, upload.single('screenshot'), applyHostel);
+// Temporarily use upload.any() to debug "Unexpected field" issue
+router.route('/apply').post(protect, upload.any(), applyHostel);
 router.route('/my-applications').get(protect, getMyApplications);
 router.route('/applications').get(protect, admin, getAllApplications);
 router.route('/applications/:id').put(protect, admin, updateApplicationStatus);

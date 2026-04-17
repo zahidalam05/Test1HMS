@@ -4,14 +4,14 @@ import API from '../services/api';
 const Payments = () => {
     const [payments, setPayments] = useState([]);
 
-    useEffect(() => {
-        fetchPayments();
-    }, []);
-
     const fetchPayments = async () => {
         const { data } = await API.get('/payments');
         setPayments(data);
     };
+
+    useEffect(() => {
+        fetchPayments();
+    }, []);
 
     const handleUpdate = async (id, status) => {
         if (window.confirm(`Are you sure you want to ${status} this payment?`)) {

@@ -3,14 +3,10 @@ import AuthContext from '../context/AuthContext';
 import API from '../services/api';
 
 const Profile = () => {
-    const { user, setUser } = useContext(AuthContext); // Assuming setUser is available to update global context if name changes
+    const { user } = useContext(AuthContext); // Assuming setUser is available to update global context if name changes
     const [profile, setProfile] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({});
-
-    useEffect(() => {
-        fetchProfile();
-    }, []);
 
     const fetchProfile = async () => {
         try {
@@ -25,9 +21,13 @@ const Profile = () => {
                 gender: data.profile?.gender || ''
             });
         } catch (error) {
-            console.error("Failed to fetch profile");
+            console.error("Failed to fetch profile", error);
         }
     };
+
+    useEffect(() => {
+        fetchProfile();
+    }, []);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -47,13 +47,13 @@ const Profile = () => {
 
     if (!profile) return <div>Loading Profile...</div>;
 
-    const Field = ({ label, name, value, readOnly = false }) => (
-        <div>
+    const renderField = ({ label, name, value, readOnly = false }) => (
+        <div key={name}>
             <label className="block text-sm font-medium text-gray-500 mb-1">{label}</label>
             {isEditing && !readOnly ? (
                 <input
                     name={name}
-                    value={formData[name]}
+                    value={formData[name] || ''}
                     onChange={handleChange}
                     className="w-full border border-gray-300 rounded px-2 py-1 text-gray-900 focus:ring-2 focus:ring-blue-500 outline-none"
                 />
@@ -70,8 +70,8 @@ const Profile = () => {
                 <button
                     onClick={() => isEditing ? handleSave() : setIsEditing(true)}
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${isEditing
-                            ? 'bg-green-600 text-white hover:bg-green-700'
-                            : 'bg-blue-600 text-white hover:bg-blue-700'
+                        ? 'bg-green-600 text-white hover:bg-green-700'
+                        : 'bg-blue-600 text-white hover:bg-blue-700'
                         }`}
                 >
                     {isEditing ? 'Save Changes' : 'Edit Profile'}
@@ -83,12 +83,12 @@ const Profile = () => {
                     <h3 className="text-lg font-medium text-gray-900">Student Details</h3>
                 </div>
                 <div className="px-6 py-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Field label="Full Name" name="name" value={isEditing ? formData.name : user.name} />
-                    <Field label="Email Address" name="email" value={isEditing ? formData.email : user.email} />
-                    <Field label="Roll Number" name="rollNo" value={profile.rollNo} />
-                    <Field label="Branch" name="branch" value={profile.branch} />
-                    <Field label="Year" name="year" value={profile.year} />
-                    <Field label="Gender" name="gender" value={profile.gender} />
+                    {renderField({ label: "Full Name", name: "name", value: isEditing ? formData.name : user.name })}
+                    {renderField({ label: "Email Address", name: "email", value: isEditing ? formData.email : user.email })}
+                    {renderField({ label: "Roll Number", name: "rollNo", value: profile.rollNo })}
+                    {renderField({ label: "Branch", name: "branch", value: profile.branch })}
+                    {renderField({ label: "Year", name: "year", value: profile.year })}
+                    {renderField({ label: "Gender", name: "gender", value: profile.gender })}
                 </div>
             </div>
 

@@ -1,0 +1,81 @@
+
+[2026-04-17T14:24:54.192Z] ERROR: Student profile not found
+STACK: Error: Student profile not found
+    at getMyPayments (file:///D:/BACKEND/HLO/backend/controllers/paymentController.js:48:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+[2026-04-17T14:24:54.309Z] ERROR: Student profile not found
+STACK: Error: Student profile not found
+    at getMyPayments (file:///D:/BACKEND/HLO/backend/controllers/paymentController.js:48:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+[2026-04-17T14:26:05.051Z] ERROR: Student not found
+STACK: Error: Student not found
+    at getMyApplications (file:///D:/BACKEND/HLO/backend/controllers/studentController.js:206:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+[2026-04-17T14:26:05.339Z] ERROR: Student not found
+STACK: Error: Student not found
+    at getMyApplications (file:///D:/BACKEND/HLO/backend/controllers/studentController.js:206:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+[2026-04-17T14:26:06.826Z] ERROR: Student profile not found
+STACK: Error: Student profile not found
+    at getMyPayments (file:///D:/BACKEND/HLO/backend/controllers/paymentController.js:48:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+[2026-04-17T14:26:06.965Z] ERROR: Student profile not found
+STACK: Error: Student profile not found
+    at getMyPayments (file:///D:/BACKEND/HLO/backend/controllers/paymentController.js:48:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+[2026-04-17T14:26:23.527Z] ERROR: Student profile not found
+STACK: Error: Student profile not found
+    at getMyPayments (file:///D:/BACKEND/HLO/backend/controllers/paymentController.js:48:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+[2026-04-17T14:26:23.684Z] ERROR: Student profile not found
+STACK: Error: Student profile not found
+    at getMyPayments (file:///D:/BACKEND/HLO/backend/controllers/paymentController.js:48:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+[2026-04-17T14:27:19.354Z] ERROR: Student profile not found
+STACK: Error: Student profile not found
+    at getMyPayments (file:///D:/BACKEND/HLO/backend/controllers/paymentController.js:48:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+[2026-04-17T14:27:19.968Z] ERROR: Student profile not found
+STACK: Error: Student profile not found
+    at getMyPayments (file:///D:/BACKEND/HLO/backend/controllers/paymentController.js:48:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+[2026-04-17T14:27:45.684Z] ERROR: Student not found
+STACK: Error: Student not found
+    at getMyApplications (file:///D:/BACKEND/HLO/backend/controllers/studentController.js:206:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+[2026-04-17T14:27:46.286Z] ERROR: Student not found
+STACK: Error: Student not found
+    at getMyApplications (file:///D:/BACKEND/HLO/backend/controllers/studentController.js:206:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+[2026-04-17T14:36:47.971Z] ERROR: Cannot read properties of null (reading 'role')
+STACK: TypeError: Cannot read properties of null (reading 'role')
+    at getUserProfile (file:///D:/BACKEND/HLO/backend/controllers/authController.js:98:18)
+    at Layer.handleRequest (D:\BACKEND\HLO\backend\node_modules\router\lib\layer.js:152:17)
+    at next (D:\BACKEND\HLO\backend\node_modules\router\lib\route.js:157:13)
+    at protect (file:///D:/BACKEND/HLO/backend/middleware/authMiddleware.js:28:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+[2026-04-17T14:36:48.248Z] ERROR: Cannot read properties of null (reading 'role')
+STACK: TypeError: Cannot read properties of null (reading 'role')
+    at getUserProfile (file:///D:/BACKEND/HLO/backend/controllers/authController.js:98:18)
+    at Layer.handleRequest (D:\BACKEND\HLO\backend\node_modules\router\lib\layer.js:152:17)
+    at next (D:\BACKEND\HLO\backend\node_modules\router\lib\route.js:157:13)
+    at protect (file:///D:/BACKEND/HLO/backend/middleware/authMiddleware.js:28:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+[2026-04-17T14:37:10.608Z] ERROR: Invalid email or password
+STACK: Error: Invalid email or password
+    at authUser (file:///D:/BACKEND/HLO/backend/controllers/authController.js:41:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)

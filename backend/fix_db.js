@@ -1,37 +1,37 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+dotenv.config();
 
-dotenv.config({ path: '../.env' });
-
-const fixDB = async () => {
+const fixDb = async () => {
     try {
-        const conn = await mongoose.connect(process.env.MONGO_URI);
-        console.log(`MongoDB Connected: ${conn.connection.host}`);
+        await mongoose.connect(process.env.MONGO_URI);
+        console.log('MongoDB Connected to fix index...');
 
         const db = mongoose.connection.db;
+        const collections = await db.listCollections({ name: 'users' }).toArray();
 
-        // List indexes on users collection
-        const indexes = await db.collection('users').indexes();
-        console.log('Current Indexes on users:', indexes);
+        if (collections.length > 0) {
+            console.log('Checking indexes on users collection...');
+            const indexes = await db.collection('users').indexes();
+            console.log('Current Indexes:', indexes.map(i => i.name));
 
-        const usernameIndex = indexes.find(idx => idx.name === 'username_1');
-
-        if (usernameIndex) {
-            console.log('Found zombie index "username_1". Dropping it...');
-            await db.collection('users').dropIndex('username_1');
-            console.log('Successfully dropped "username_1" index.');
+            if (indexes.find(i => i.name === 'username_1')) {
+                console.log('Dropping legacy username_1 index...');
+                await db.collection('users').dropIndex('username_1');
+                console.log('Index dropped successfully!');
+            } else {
+                console.log('username_1 index not found. No action needed.');
+            }
         } else {
-            console.log('Index "username_1" not found. No action needed.');
+            console.log('Users collection not found.');
         }
 
-        // Also check for any other null duplicate issues?
-        // Maybe rollNo on students if we change it?
-
     } catch (error) {
-        console.error(`Error: ${error.message}`);
+        console.error('Error fixing db:', error);
     } finally {
+        await mongoose.disconnect();
         process.exit();
     }
 };
 
-fixDB();
+fixDb();

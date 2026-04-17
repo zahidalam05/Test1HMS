@@ -6,7 +6,6 @@ const Hostel = () => {
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [profile, setProfile] = useState(null);
-    const [submitted, setSubmitted] = useState(false);
     const [myApplications, setMyApplications] = useState([]);
     const [showForm, setShowForm] = useState(false); // To toggle between status and new form
 
@@ -29,11 +28,13 @@ const Hostel = () => {
         district: '',
         block: '',
         pinCode: '',
-        amount: '',
+        hostelFeeAmount: '',
+        messFeeAmount: '',
         txnId: '',
         txnDate: '',
         bank: '',
-        screenshot: null
+        hostelFeeScreenshot: null,
+        messFeeScreenshot: null
     });
 
     useEffect(() => {
@@ -44,7 +45,7 @@ const Hostel = () => {
         try {
             const { data } = await API.get('/auth/profile');
             setProfile(data.profile);
-            if (data.profile?.room) setSubmitted(true);
+            setProfile(data.profile);
 
             // Fetch History
             const { data: apps } = await API.get('/students/my-applications');
@@ -65,7 +66,7 @@ const Hostel = () => {
     };
 
     const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-    const handleFile = (e) => setForm({ ...form, screenshot: e.target.files[0] });
+    const handleFile = (e, fieldName) => setForm({ ...form, [fieldName]: e.target.files[0] });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -77,12 +78,13 @@ const Hostel = () => {
             await API.post('/students/apply', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
+            alert("Application Submitted Successfully!");
             setShowForm(false);
-            setSubmitted(true); // Technically submitted, but might trigger "Pending" view
             loadData(); // Refresh apps
             window.scrollTo(0, 0);
         } catch (error) {
-            alert("Submission Failed: " + (error.response?.data?.message || 'Error'));
+            const msg = error.response?.data?.message || error.message || 'Unknown Error';
+            alert("Submission Failed: " + msg);
         } finally {
             setLoading(false);
         }
@@ -98,9 +100,9 @@ const Hostel = () => {
 
     // Start New Application View
     const renderForm = () => (
-        <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden animate-in fade-in slide-in-from-bottom-8">
-            <div className="p-8 md:p-12 border-b border-gray-100 flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-gray-800">New Application</h2>
+        <div className="bg-[#f8f9fa] rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 overflow-hidden animate-in fade-in slide-in-from-bottom-8 mt-8">
+            <div className="p-8 md:p-12 border-b border-gray-100 flex justify-between items-center bg-white">
+                <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">New Application</h2>
                 {profile?.room && (
                     <button onClick={() => setShowForm(false)} className="text-sm text-red-500 hover:text-red-700 font-medium">
                         Cancel Application
@@ -120,18 +122,20 @@ const Hostel = () => {
                                 <Input label="Session" name="session" value={form.session} onChange={handleChange} placeholder="e.g. 2025-2026" required />
                                 <Input label="Mobile Number" name="mobNo" value={form.mobNo} onChange={handleChange} required />
                                 <Input label="Email Address" name="email" value={form.email} onChange={handleChange} required />
-                            </div>
-                        </div>
-
-                        <div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <Input label="Father's Name" name="fatherName" value={form.fatherName} onChange={handleChange} required />
                                 <Input label="Parent's Mobile" name="parentMobNo" value={form.parentMobNo} onChange={handleChange} required />
+                                <div className="hidden md:block"></div>
 
-                                <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-blue-50/50 rounded-2xl border border-blue-100">
+                                <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 p-8 bg-indigo-50/50 rounded-[20px] border border-indigo-100 shadow-sm">
                                     <div>
-                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Hostel Type</label>
-                                        <select name="hostelType" value={form.hostelType} onChange={handleChange} required className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all">
+                                        <label className="block font-bold text-[13px] text-gray-700 mb-2 px-1">Hostel Type <span className="text-red-500">*</span></label>
+                                        <select
+                                            name="hostelType"
+                                            value={form.hostelType}
+                                            onChange={handleChange}
+                                            required
+                                            className="w-full px-5 py-4 bg-[#ecedf1] border-2 border-transparent rounded-[18px] outline-none focus:border-indigo-500/20 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 transition-all duration-300 text-[15px] font-semibold text-gray-800 shadow-sm hover:bg-[#e4e6eb] appearance-none cursor-pointer"
+                                        >
                                             <option value="">Select Hostel</option>
                                             <option value="H1">H1 (1st Year)</option>
                                             <option value="H2">H2</option>
@@ -187,21 +191,45 @@ const Hostel = () => {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <Input label="Amount Paid (₹)" name="amount" type="number" value={form.amount} onChange={handleChange} required />
+                            <Input label="Hostel Fee (₹)" name="hostelFeeAmount" type="number" value={form.hostelFeeAmount} onChange={handleChange} required />
+                            <Input label="Mess Fee (₹)" name="messFeeAmount" type="number" value={form.messFeeAmount} onChange={handleChange} required />
+
+                            <div className="md:col-span-2">
+                                <Input label="Total Amount (Auto-Calculated)" name="totalAmount" type="number" value={Number(form.hostelFeeAmount || 0) + Number(form.messFeeAmount || 0)} readOnly />
+                            </div>
+
                             <Input label="Transaction ID (UTR)" name="txnId" value={form.txnId} onChange={handleChange} required />
                             <Input label="Transaction Date" name="txnDate" type="date" value={form.txnDate} onChange={handleChange} required />
                             <Input label="Bank Name" name="bank" value={form.bank} onChange={handleChange} placeholder="e.g. SBI, HDFC" required />
+                            <div className="hidden md:block"></div>
 
-                            <div className="md:col-span-2">
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">Upload Screenshot</label>
-                                <div className="relative border-2 border-dashed border-gray-300 rounded-2xl p-8 hover:bg-gray-50 transition-colors text-center cursor-pointer group">
-                                    <input type="file" onChange={handleFile} required className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                            {/* Hostel Fee Upload */}
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">Upload Hostel Fee Receipt</label>
+                                <div className="relative border-2 border-dashed border-gray-300 rounded-2xl p-6 hover:bg-indigo-50 transition-colors text-center cursor-pointer group">
+                                    <input type="file" onChange={(e) => handleFile(e, 'hostelFeeScreenshot')} required className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                                     <div className="flex flex-col items-center gap-2">
-                                        <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                                            <UploadCloud className="text-blue-500" />
+                                        <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                                            <UploadCloud className="text-indigo-500" />
                                         </div>
-                                        <p className="text-sm font-medium text-gray-600 group-hover:text-blue-600">
-                                            {form.screenshot ? form.screenshot.name : "Click or Drag to upload screenshot"}
+                                        <p className="text-xs font-medium text-gray-600 group-hover:text-indigo-600">
+                                            {form.hostelFeeScreenshot ? form.hostelFeeScreenshot.name : "Upload Hostel Receipt"}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Mess Fee Upload */}
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">Upload Mess Fee Receipt</label>
+                                <div className="relative border-2 border-dashed border-gray-300 rounded-2xl p-6 hover:bg-orange-50 transition-colors text-center cursor-pointer group">
+                                    <input type="file" onChange={(e) => handleFile(e, 'messFeeScreenshot')} required className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                                    <div className="flex flex-col items-center gap-2">
+                                        <div className="w-10 h-10 bg-orange-50 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                                            <UploadCloud className="text-orange-500" />
+                                        </div>
+                                        <p className="text-xs font-medium text-gray-600 group-hover:text-orange-600">
+                                            {form.messFeeScreenshot ? form.messFeeScreenshot.name : "Upload Mess Receipt"}
                                         </p>
                                     </div>
                                 </div>
@@ -221,7 +249,7 @@ const Hostel = () => {
                     {step < 3 ? (
                         <button type="button" onClick={() => {
                             if (step === 1) {
-                                if (!form.name || !form.rollNo || !form.branch || !form.year || !form.session || !form.mobNo || !form.email || !form.fatherName || !form.parentMobNo || !form.hostelType) {
+                                if (!form.name || !form.rollNo || !form.branch || !form.academicYear || !form.session || !form.mobNo || !form.email || !form.fatherName || !form.parentMobNo || !form.hostelType) {
                                     alert("Please fill all fields in this step."); return;
                                 }
                                 if (form.hostelType === 'Other' && !form.hostelTypeOther) { alert("Specify Hostel Type"); return; }
@@ -232,11 +260,11 @@ const Hostel = () => {
                                 }
                             }
                             setStep(s => s + 1)
-                        }} className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-blue-500/30 transition-all transform hover:-translate-y-0.5">
+                        }} className="flex items-center gap-2 px-8 py-3.5 bg-[#5145ff] text-white rounded-[14px] font-bold hover:bg-[#4338e5] shadow-[0_4px_14px_0_rgba(81,69,255,0.39)] transition-all transform hover:-translate-y-0.5 outline-none">
                             Next Step <ArrowRight size={18} />
                         </button>
                     ) : (
-                        <button type="submit" disabled={loading} className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-xl font-bold hover:shadow-lg hover:shadow-green-500/30 transition-all transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed">
+                        <button type="submit" disabled={loading} className="flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-[14px] font-bold hover:shadow-[0_4px_14px_0_rgba(16,185,129,0.39)] transition-all transform hover:-translate-y-0.5 outline-none disabled:opacity-70 disabled:cursor-not-allowed">
                             {loading ? 'Submitting Application...' : 'Submit Final Application'}
                         </button>
                     )}
@@ -259,48 +287,70 @@ const Hostel = () => {
 
                 {/* 1. If currently allocated room -> Show Detailed Card */}
                 {!showForm && profile?.room && (
-                    <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden w-full relative group">
-                        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-8 text-white relative overflow-hidden">
-                            <div className="relative z-10 flex justify-between items-center">
-                                <div>
-                                    <h1 className="text-3xl font-bold">My Room Details</h1>
-                                    <p className="text-blue-100 mt-1">Allocation Confirmed</p>
-                                </div>
-                                <div className="bg-white/20 p-3 rounded-xl backdrop-blur-md">
-                                    <Home size={32} />
+                    <div className="bg-white rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-gray-100 overflow-hidden w-full relative group transition-all duration-500 hover:shadow-[0_30px_70px_rgba(0,0,0,0.08)]">
+                        {/* Header Gradient */}
+                        <div className="bg-gradient-to-br from-[#4f46e5] via-[#6366f1] to-[#818cf8] p-10 text-white relative">
+                            <div className="relative z-10">
+                                <span className="px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-[11px] font-bold uppercase tracking-[2px] mb-4 inline-block border border-white/30">
+                                    Current Residency
+                                </span>
+                                <h1 className="text-4xl font-black tracking-tight mb-2">My Room Details</h1>
+                                <div className="flex items-center gap-2 text-indigo-100 font-medium">
+                                    <CheckCircle size={18} className="text-indigo-300" />
+                                    Allocation Confirmed & Active
                                 </div>
                             </div>
-                            <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
-                            <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+
+                            {/* Decorative Background Elements */}
+                            <div className="absolute top-0 right-0 p-8 opacity-20 transform translate-x-4 -translate-y-4">
+                                <Home size={180} strokeWidth={1} />
+                            </div>
+                            <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
                         </div>
 
-                        <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-10">
-                            <div className="space-y-6">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 font-bold text-2xl shadow-sm">
-                                        {profile.room.roomNumber}
+                        <div className="p-10 grid grid-cols-1 lg:grid-cols-3 gap-10">
+                            {/* Room Info */}
+                            <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-8">
+                                <div className="p-6 rounded-[24px] bg-gray-50 border border-gray-100 flex items-center gap-5 group/item hover:bg-white hover:shadow-xl transition-all duration-300">
+                                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-[#4f46e5] shadow-sm transform group-hover/item:scale-110 transition-transform">
+                                        <Users size={28} />
                                     </div>
                                     <div>
-                                        <h3 className="text-gray-500 font-medium text-sm uppercase tracking-wider">Room Number</h3>
-                                        <p className="text-2xl font-bold text-gray-800">{profile.room.roomNumber}</p>
+                                        <h3 className="text-gray-400 font-bold text-[11px] uppercase tracking-wider mb-1">Room Number</h3>
+                                        <p className="text-2xl font-black text-gray-900">{profile.room.roomNumber}</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-4">
-                                    <div className="w-16 h-16 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600 shadow-sm">
+
+                                <div className="p-6 rounded-[24px] bg-gray-50 border border-gray-100 flex items-center gap-5 group/item hover:bg-white hover:shadow-xl transition-all duration-300">
+                                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-purple-600 shadow-sm transform group-hover/item:scale-110 transition-transform">
                                         <Home size={28} />
                                     </div>
                                     <div>
-                                        <h3 className="text-gray-500 font-medium text-sm uppercase tracking-wider">Hostel Name</h3>
-                                        <p className="text-2xl font-bold text-gray-800">{profile.hostel.name}</p>
+                                        <h3 className="text-gray-400 font-bold text-[11px] uppercase tracking-wider mb-1">Hostel Block</h3>
+                                        <p className="text-2xl font-black text-gray-900">{profile.hostel.name}</p>
                                     </div>
+                                </div>
+
+                                <div className="sm:col-span-2 flex items-center gap-4 px-6 py-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                                    <p className="text-[13px] font-bold text-emerald-700">All services (Mess/Wi-Fi/Maintenance) are active for this wing.</p>
                                 </div>
                             </div>
 
-                            <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100 flex flex-col justify-center items-center text-center space-y-4">
-                                <p className="text-gray-500">Looking to apply for the next academic session?</p>
+                            {/* Action Card */}
+                            <div className="bg-gradient-to-b from-[#f8faff] to-[#f0f4ff] rounded-[28px] p-8 border border-[#e0e7ff] flex flex-col justify-between items-center text-center">
+                                <div>
+                                    <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md">
+                                        <ArrowRight className="text-indigo-600" />
+                                    </div>
+                                    <h4 className="font-bold text-gray-900 mb-2">Next Session</h4>
+                                    <p className="text-[13px] text-gray-500 font-medium leading-relaxed">
+                                        Ready to apply for the 2026-27 hostel allotment cycle?
+                                    </p>
+                                </div>
                                 <button
                                     onClick={() => { setStep(1); setShowForm(true); }}
-                                    className="px-6 py-3 bg-white border border-indigo-200 text-indigo-600 font-semibold rounded-xl hover:bg-indigo-50 transition-colors shadow-sm w-full"
+                                    className="mt-6 w-full py-4 bg-white border-2 border-indigo-100 text-[#4f46e5] font-bold rounded-2xl hover:bg-[#4f46e5] hover:text-white hover:border-[#4f46e5] transition-all duration-300 shadow-sm"
                                 >
                                     Apply for New Session
                                 </button>
@@ -354,8 +404,8 @@ const Hostel = () => {
                                             <td className="px-6 py-4 text-sm text-gray-500">{new Date(app.createdAt).toLocaleDateString()}</td>
                                             <td className="px-6 py-4">
                                                 <span className={`px-3 py-1 rounded-full text-xs font-bold ${app.status === 'Approved' ? 'bg-green-100 text-green-700' :
-                                                        app.status === 'Rejected' ? 'bg-red-100 text-red-700' :
-                                                            'bg-yellow-100 text-yellow-700'
+                                                    app.status === 'Rejected' ? 'bg-red-100 text-red-700' :
+                                                        'bg-yellow-100 text-yellow-700'
                                                     }`}>
                                                     {app.status}
                                                 </span>
@@ -374,19 +424,19 @@ const Hostel = () => {
 };
 
 const Input = ({ label, required, ...props }) => (
-    <div className="group">
-        <label className="block text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-blue-600 transition-colors">
+    <div className="w-full">
+        <label className="block font-bold text-[13px] text-gray-700 mb-2 px-1">
             {label} {required && <span className="text-red-500">*</span>}
         </label>
         <input
             required={required}
             {...props}
             className={`
-                w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl 
-                focus:bg-white focus:ring-4 focus:ring-blue-100 focus:border-blue-500 
-                outline-none transition-all duration-200 font-medium text-gray-800
-                placeholder-gray-400
-                ${props.readOnly ? 'opacity-70 cursor-not-allowed' : ''}
+                w-full px-5 py-4 bg-[#ecedf1] border-2 border-transparent rounded-[18px] 
+                outline-none focus:border-indigo-500/20 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 
+                transition-all duration-300 text-[15px] font-semibold text-gray-800 placeholder-gray-400
+                shadow-sm hover:bg-[#e4e6eb]
+                ${props.readOnly ? 'opacity-70 cursor-not-allowed bg-gray-100' : ''}
             `}
         />
     </div>

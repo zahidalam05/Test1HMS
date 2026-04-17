@@ -56,31 +56,35 @@ const Complaints = () => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto space-y-6">
-            <h1 className="text-3xl font-bold text-gray-900">Raise Complaint</h1>
+        <div className="max-w-4xl mx-auto space-y-8 pb-10">
+            <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">Raise Complaint</h1>
 
             {/* Toggle */}
-            <div className="flex gap-4 mb-6">
+            <div className="flex flex-col sm:flex-row gap-4 mb-2">
                 <button
                     onClick={() => setType('Global')}
-                    className={`flex-1 py-4 rounded-xl border flex items-center justify-center gap-3 transition-all ${type === 'Global' ? 'bg-indigo-600 text-white shadow-lg border-transparent' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+                    className={`flex-1 py-5 rounded-[20px] flex items-center justify-center gap-3 transition-all duration-300 transform hover:-translate-y-1 ${type === 'Global' ? 'bg-[#5145ff] text-white shadow-[0_8px_20px_0_rgba(81,69,255,0.39)] border-transparent' : 'bg-white text-gray-600 shadow-sm border border-gray-100 hover:shadow-md'}`}
                 >
-                    <Globe />
-                    <span className="font-bold">Global Complaint</span>
-                    <span className="text-xs opacity-75 hidden sm:block">(Common areas, mess, wifi)</span>
+                    <Globe size={24} />
+                    <div className="text-left">
+                        <span className="block font-extrabold text-[15px]">Global Complaint</span>
+                        <span className={`text-[11px] font-bold ${type === 'Global' ? 'text-indigo-200' : 'text-gray-400'}`}>(Common areas, mess, wifi)</span>
+                    </div>
                 </button>
                 <button
                     onClick={() => setType('Personal')}
-                    className={`flex-1 py-4 rounded-xl border flex items-center justify-center gap-3 transition-all ${type === 'Personal' ? 'bg-indigo-600 text-white shadow-lg border-transparent' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+                    className={`flex-1 py-5 rounded-[20px] flex items-center justify-center gap-3 transition-all duration-300 transform hover:-translate-y-1 ${type === 'Personal' ? 'bg-[#5145ff] text-white shadow-[0_8px_20px_0_rgba(81,69,255,0.39)] border-transparent' : 'bg-white text-gray-600 shadow-sm border border-gray-100 hover:shadow-md'}`}
                 >
-                    <Home />
-                    <span className="font-bold">Personal Complaint</span>
-                    <span className="text-xs opacity-75 hidden sm:block">(Room specific issues)</span>
+                    <Home size={24} />
+                    <div className="text-left">
+                        <span className="block font-extrabold text-[15px]">Personal Complaint</span>
+                        <span className={`text-[11px] font-bold ${type === 'Personal' ? 'text-indigo-200' : 'text-gray-400'}`}>(Room specific issues)</span>
+                    </div>
                 </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
-                <h3 className="text-xl font-bold text-gray-800 border-b pb-4 mb-6">
+            <form onSubmit={handleSubmit} className="bg-[#f8f9fa] p-8 md:p-10 rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50">
+                <h3 className="text-2xl font-extrabold text-gray-900 border-b border-gray-200 pb-5 mb-8">
                     {type} Complaint Details
                 </h3>
 
@@ -92,9 +96,9 @@ const Complaints = () => {
                     <Input label="Batch (Year)" name="batch" value={form.batch} onChange={handleChange} />
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Hostel Type</label>
-                        <select name="hostelType" value={form.hostelType} onChange={handleChange} required className="w-full border p-2 rounded">
-                            <option value="">Select</option>
+                        <label className="block font-bold text-[13px] text-gray-700 mb-1.5 mt-2">Hostel Type</label>
+                        <select name="hostelType" value={form.hostelType} onChange={handleChange} required className="w-full px-5 py-4 bg-[#ecedf1] border-2 border-transparent rounded-[20px] outline-none focus:border-indigo-500/20 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 transition-all duration-300 text-[15px] font-semibold text-gray-800 shadow-sm hover:bg-[#e4e6eb]">
+                            <option value="">Select Hostel</option>
                             <option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>GH</option>
                             <option>Other</option>
                         </select>
@@ -112,8 +116,8 @@ const Complaints = () => {
                     )}
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                        <select name="category" value={form.category} onChange={handleChange} className="w-full border p-2 rounded">
+                        <label className="block font-bold text-[13px] text-gray-700 mb-1.5 mt-2">Category</label>
+                        <select name="category" value={form.category} onChange={handleChange} className="w-full px-5 py-4 bg-[#ecedf1] border-2 border-transparent rounded-[20px] outline-none focus:border-indigo-500/20 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 transition-all duration-300 text-[15px] font-semibold text-gray-800 shadow-sm hover:bg-[#e4e6eb]">
                             <option>Electricity</option>
                             <option>Plumbing</option>
                             <option>Furniture</option>
@@ -131,13 +135,15 @@ const Complaints = () => {
                     </div>
 
                     <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Description <span className="text-red-500">*</span></label>
-                        <textarea name="description" rows="4" value={form.description} onChange={handleChange} required className="w-full border p-2 rounded text-sm"></textarea>
+                        <label className="block font-bold text-[13px] text-gray-700 mb-1.5 mt-2">Description <span className="text-red-500">*</span></label>
+                        <textarea name="description" rows="4" value={form.description} onChange={handleChange} required className="w-full px-5 py-4 bg-[#ecedf1] border-2 border-transparent rounded-[20px] outline-none focus:border-indigo-500/20 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 transition-all duration-300 text-[15px] font-semibold text-gray-800 shadow-sm hover:bg-[#e4e6eb] placeholder-gray-400"></textarea>
                     </div>
                 </div>
 
-                <div className="mt-6 text-right">
-                    <button className="bg-indigo-600 text-white px-8 py-2 rounded hover:bg-indigo-700">Submit Complaint</button>
+                <div className="mt-10 md:text-right">
+                    <button className="w-full md:w-auto px-10 py-4 bg-[#5145ff] text-white rounded-[14px] font-bold shadow-[0_4px_14px_0_rgba(81,69,255,0.39)] hover:bg-[#4338e5] hover:shadow-[0_6px_20px_rgba(81,69,255,0.23)] transition-all transform hover:-translate-y-0.5 outline-none">
+                        Submit Complaint
+                    </button>
                 </div>
             </form>
         </div>
@@ -146,10 +152,19 @@ const Complaints = () => {
 
 const Input = ({ label, required, ...props }) => (
     <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block font-bold text-[13px] text-gray-700 mb-2 px-1 text-left uppercase tracking-wider">
             {label} {required && <span className="text-red-500">*</span>}
         </label>
-        <input required={required} {...props} className="w-full border border-gray-300 p-2 rounded focus:ring-1 focus:ring-indigo-500 focus:outline-none" />
+        <input
+            required={required}
+            {...props}
+            className={`
+                w-full px-5 py-4 bg-[#ecedf1] border-2 border-transparent rounded-[20px] 
+                outline-none focus:border-indigo-500/20 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 
+                transition-all duration-300 text-[15px] font-semibold text-gray-800 shadow-sm hover:bg-[#e4e6eb] placeholder-gray-400
+                ${props.readOnly ? 'opacity-70 cursor-not-allowed' : ''}
+            `}
+        />
     </div>
 );
 
