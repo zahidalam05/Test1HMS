@@ -53,7 +53,7 @@ const FeePayment = () => {
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 print:hidden">
-                                    <a href={`http://localhost:5000/${p.screenshotUrl}`} target="_blank" className="text-blue-600 hover:underline text-sm">View</a>
+                                    <a href={`https://mithms-backend.onrender.com/${p.screenshotUrl}`} target="_blank" className="text-blue-600 hover:underline text-sm">View</a>
                                 </td>
                             </tr>
                         ))}

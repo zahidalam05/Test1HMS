@@ -206,12 +206,12 @@ const Applications = () => {
                                         </div>
                                         <h5 className="text-[11px] font-bold text-gray-400 uppercase tracking-tighter">Hostel Receipt</h5>
                                         <a
-                                            href={`http://localhost:5000/${viewApp.payment?.hostelFeeUrl || viewApp.payment?.screenshotUrl}`}
+                                            href={`https://mithms-backend.onrender.com/${viewApp.payment?.hostelFeeUrl || viewApp.payment?.screenshotUrl}`}
                                             target="_blank"
                                             className="block w-full h-40 bg-gray-200 rounded-2xl overflow-hidden relative group border-2 border-white shadow-md"
                                         >
                                             <img
-                                                src={`http://localhost:5000/${viewApp.payment?.hostelFeeUrl || viewApp.payment?.screenshotUrl}`}
+                                                src={`https://mithms-backend.onrender.com/${viewApp.payment?.hostelFeeUrl || viewApp.payment?.screenshotUrl}`}
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                                                 alt="Hostel Proof"
                                             />
@@ -223,16 +223,16 @@ const Applications = () => {
                                     <div className="space-y-4">
                                         <div className="bg-white p-4 rounded-2xl border border-gray-100">
                                             <Field label="Mess Fee" value={viewApp.payment?.messFeeAmount ? `₹${viewApp.payment.messFeeAmount}` : 'N/A'} />
-                                            <Field label="Total Paid" value={<span className="text-indigo-600 font-black">₹${viewApp.payment?.totalAmount || viewApp.payment?.amount}</span>} />
+                                            <Field label="Total Paid" value={<span className="text-indigo-600 font-black">₹{viewApp.payment?.totalAmount || viewApp.payment?.amount}</span>} />
                                         </div>
                                         <h5 className="text-[11px] font-bold text-gray-400 uppercase tracking-tighter">Mess Receipt</h5>
                                         <a
-                                            href={`http://localhost:5000/${viewApp.payment?.messFeeUrl || viewApp.payment?.screenshotUrl}`}
+                                            href={`https://mithms-backend.onrender.com/${viewApp.payment?.messFeeUrl || viewApp.payment?.screenshotUrl}`}
                                             target="_blank"
                                             className="block w-full h-40 bg-gray-200 rounded-2xl overflow-hidden relative group border-2 border-white shadow-md"
                                         >
                                             <img
-                                                src={`http://localhost:5000/${viewApp.payment?.messFeeUrl || viewApp.payment?.screenshotUrl}`}
+                                                src={`https://mithms-backend.onrender.com/${viewApp.payment?.messFeeUrl || viewApp.payment?.screenshotUrl}`}
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                                                 alt="Mess Proof"
                                             />

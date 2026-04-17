@@ -49,7 +49,7 @@ const Payments = () => {
                                     </td>
                                     <td className="px-4 py-3 md:px-6 md:py-4 whitespace-nowrap">
                                         <a
-                                            href={`http://localhost:5000/${p.screenshotUrl}`}
+                                            href={`https://mithms-backend.onrender.com/${p.screenshotUrl}`}
                                             target="_blank"
                                             rel="noreferrer"
                                             className="text-indigo-600 hover:text-indigo-800 text-sm font-medium hover:underline block"

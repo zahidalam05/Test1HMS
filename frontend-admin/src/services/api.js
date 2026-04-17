@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-    baseURL: 'http://localhost:5000/api',
+    baseURL: 'https://mithms-backend.onrender.com/api',
 });
 
 // Add a request interceptor to add the auth token to headers
