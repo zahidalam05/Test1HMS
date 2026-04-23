@@ -7,7 +7,7 @@ const Chatbot = () => {
     const { user } = useContext(AuthContext);
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
-        { id: 1, text: `Hello ${user?.name?.split(' ')[0] || ''}! I'm your HMS AI Assistant. I can tell you about the mess menu or help with other questions. How can I help you today?`, sender: 'bot' }
+        { id: 1, text: `Hello ${user?.name?.split(' ')[0] || ''}! I'm your HMS AI Assistant. How can I help you today?`, sender: 'bot' }
     ]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);

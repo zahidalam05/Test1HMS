@@ -25,7 +25,7 @@ const Register = () => {
         setError('');
         const res = await register(formData);
         if (res.success) {
-            navigate('/');
+            navigate('/dashboard');
         } else {
             setError(res.message);
         }

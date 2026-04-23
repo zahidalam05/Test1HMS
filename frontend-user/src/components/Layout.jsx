@@ -26,11 +26,11 @@ const Layout = () => {
 
     const handleLogout = () => {
         logout();
-        navigate('/login');
+        navigate('/');
     };
 
     const navItems = [
-        { path: '/', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
+        { path: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
         { path: '/hostel', label: 'Apply Room', icon: <Home size={20} /> },
         { path: '/fees', label: 'See Payments', icon: <CreditCard size={20} /> },
         { path: '/mess', label: 'Mess', icon: <Utensils size={20} /> },
